@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return new ProductCollection($this->product->latest()->paginate(10));
+        return new ProductCollection($this->product->orderBy('id', 'DESC')->paginate(10));
     }
 
     /**
