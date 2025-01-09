@@ -23,7 +23,7 @@ class ProductControllerTest extends TestCase
         $response
             ->assertStatus(200);
 
-        $response->assertJson(function(AssertableJson $json) {
+        $response->assertJson(function (AssertableJson $json) {
             $json->hasAll(['data', 'meta', 'links']);
             $json->hasAll(['data.0.id', 'data.0.name', 'data.0.price', 'data.0.price_float']);
             $json->whereAllType([
@@ -48,18 +48,18 @@ class ProductControllerTest extends TestCase
             ->assertStatus(200);
 
         $response->assertJson(fn(AssertableJson $json) =>
-                        $json->where('data.0.id', 1)
-                            ->where('data.9.id', 10)
-                            ->count('data', 10)->etc());
+        $json->where('data.0.id', 20)
+            ->where('data.9.id', 11)
+            ->count('data', 10)->etc());
 
         $response = $this->getJson('/api/products?page=2');
         $response
             ->assertStatus(200);
 
         $response->assertJson(fn(AssertableJson $json) =>
-                    $json->where('data.0.id', 11)
-                         ->where('data.9.id', 20)
-                         ->count('data', 10)->etc());
+        $json->where('data.0.id', 10)
+            ->where('data.9.id', 1)
+            ->count('data', 10)->etc());
     }
 
     public function test_should_product_get_endpoint_returns_a_single_product()
@@ -72,7 +72,8 @@ class ProductControllerTest extends TestCase
         $response
             ->assertStatus(200);
 
-        $response->assertJson(fn(AssertableJson $json) =>
+        $response->assertJson(
+            fn(AssertableJson $json) =>
             $json->has('data')
                 ->hasAll(['data.id', 'data.name', 'data.price', 'data.price_float'])
                 ->whereAllType([
@@ -103,7 +104,8 @@ class ProductControllerTest extends TestCase
 
         $response->assertUnprocessable();
 
-        $response->assertJson(fn(AssertableJson $json) =>
+        $response->assertJson(
+            fn(AssertableJson $json) =>
             $json->hasAll(['message', 'errors'])
                 ->hasAll(['errors.name', 'errors.price'])
                 ->whereAll([
@@ -121,27 +123,28 @@ class ProductControllerTest extends TestCase
             'price' => 3999
         ];
 
-       $token = $this->makeUserToken();
+        $token = $this->makeUserToken();
 
         $response = $this->postJson('/api/products', $product, ['Authorization' => 'Bearer ' . $token]);
 
         $response->assertCreated();
 
-        $response->assertJson(fn(AssertableJson $json) =>
-        $json->has('data')
-            ->hasAll(['data.id', 'data.name', 'data.price', 'data.price_float'])
-            ->whereAllType([
-                'data.id' => 'integer',
-                'data.name' => 'string',
-                //'data.description' => 'string|null',
-                'data.price' => 'integer',
-                'data.price_float' => 'double'
-            ])
-            ->whereAll([
-                'data.name' => 'Produto Teste',
-                'data.price' => 3999,
-                'data.price_float' => 39.99
-            ])
+        $response->assertJson(
+            fn(AssertableJson $json) =>
+            $json->has('data')
+                ->hasAll(['data.id', 'data.name', 'data.price', 'data.price_float'])
+                ->whereAllType([
+                    'data.id' => 'integer',
+                    'data.name' => 'string',
+                    //'data.description' => 'string|null',
+                    'data.price' => 'integer',
+                    'data.price_float' => 'double'
+                ])
+                ->whereAll([
+                    'data.name' => 'Produto Teste',
+                    'data.price' => 3999,
+                    'data.price_float' => 39.99
+                ])
         );
     }
 
@@ -155,7 +158,7 @@ class ProductControllerTest extends TestCase
 
     public function test_should_validate_payload_data_when_update_a_product()
     {
-       $token = $this->makeUserToken();
+        $token = $this->makeUserToken();
 
         Product::factory()->create(['name' => 'Produto Put', 'price' => 1999]);
 
@@ -163,13 +166,14 @@ class ProductControllerTest extends TestCase
 
         $response->assertUnprocessable();
 
-        $response->assertJson(fn(AssertableJson $json) =>
-        $json->hasAll(['message', 'errors'])
-            ->hasAll(['errors.name', 'errors.price'])
-            ->whereAll([
-                'errors.name.0' => 'Campo obrigatório!',
-                'errors.price.0' => 'Campo obrigatório!'
-            ])
+        $response->assertJson(
+            fn(AssertableJson $json) =>
+            $json->hasAll(['message', 'errors'])
+                ->hasAll(['errors.name', 'errors.price'])
+                ->whereAll([
+                    'errors.name.0' => 'Campo obrigatório!',
+                    'errors.price.0' => 'Campo obrigatório!'
+                ])
         );
     }
 
@@ -182,27 +186,28 @@ class ProductControllerTest extends TestCase
             'price' => 1999
         ];
 
-       $token = $this->makeUserToken();
+        $token = $this->makeUserToken();
 
         $response = $this->putJson('/api/products/1', $productUpdateData, ['Authorization' => 'Bearer ' . $token]);
 
         $response->assertOk();
 
-        $response->assertJson(fn(AssertableJson $json) =>
-        $json->has('data')
-            ->hasAll(['data.id', 'data.name', 'data.price', 'data.price_float'])
-            ->whereAllType([
-                'data.id' => 'integer',
-                'data.name' => 'string',
-                //'data.description' => 'string|null',
-                'data.price' => 'integer',
-                'data.price_float' => 'double'
-            ])
-            ->whereAll([
-                'data.name' => 'Produto Put Update',
-                'data.price' => 1999,
-                'data.price_float' => 19.99
-            ])
+        $response->assertJson(
+            fn(AssertableJson $json) =>
+            $json->has('data')
+                ->hasAll(['data.id', 'data.name', 'data.price', 'data.price_float'])
+                ->whereAllType([
+                    'data.id' => 'integer',
+                    'data.name' => 'string',
+                    //'data.description' => 'string|null',
+                    'data.price' => 'integer',
+                    'data.price_float' => 'double'
+                ])
+                ->whereAll([
+                    'data.name' => 'Produto Put Update',
+                    'data.price' => 1999,
+                    'data.price_float' => 19.99
+                ])
         );
     }
 
@@ -218,7 +223,7 @@ class ProductControllerTest extends TestCase
     {
         Product::factory()->create(['name' => 'Produto Delete', 'price' => 1999]);
 
-       $token = $this->makeUserToken();
+        $token = $this->makeUserToken();
 
         $response = $this->deleteJson('/api/products/1', [], ['Authorization' => 'Bearer ' . $token]);
 

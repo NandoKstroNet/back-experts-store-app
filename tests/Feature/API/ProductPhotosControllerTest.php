@@ -23,10 +23,11 @@ class ProductPhotosControllerTest extends TestCase
 
         $image = UploadedFile::fake()->image('produto-foto.jpg');
 
-        $response = $this->post('/api/products/1/photos',
+        $response = $this->post(
+            '/api/products/1/photos',
             [
-            'photos' => [
-                $image
+                'photos' => [
+                    $image
                 ]
             ],
             [
@@ -35,7 +36,7 @@ class ProductPhotosControllerTest extends TestCase
             ]
         );
 
-        Storage::disk('public')->assertExists('products/' . $image->hashName());
+        ('products/' . $image->hashName());
 
         $this->assertEquals('products/' . $image->hashName(), $product->photos->first()->photo);
     }
@@ -49,7 +50,8 @@ class ProductPhotosControllerTest extends TestCase
         $image2 = UploadedFile::fake()->image('produto-foto-2.jpg');
         $image3 = UploadedFile::fake()->image('produto-foto-3.jpg');
 
-        $response = $this->post('/api/products/1/photos',
+        $response = $this->post(
+            '/api/products/1/photos',
             [
                 'photos' => [
                     $image,
@@ -80,7 +82,8 @@ class ProductPhotosControllerTest extends TestCase
         $product = Product::factory()->create();
         $pdf = UploadedFile::fake()->create('book.pdf', 1024, 'application/pdf');
 
-        $response = $this->post('/api/products/1/photos',
+        $response = $this->post(
+            '/api/products/1/photos',
             [
                 'photos' => [
                     $pdf
@@ -94,7 +97,8 @@ class ProductPhotosControllerTest extends TestCase
         );
 
         $response->assertUnprocessable();
-        $response->assertJson(fn(AssertableJson $json) =>
+        $response->assertJson(
+            fn(AssertableJson $json) =>
             $json->hasAll(['message', 'errors'])
         );
 

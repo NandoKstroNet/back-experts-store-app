@@ -19,6 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
+Route::get('/home', [\App\Http\Controllers\API\FrontStoreController::class, 'home']);
+Route::get('/store/single/{slug}', [\App\Http\Controllers\API\FrontStoreController::class, 'single']);
+
 /**
  * GET /products
  * GET /products/:id
@@ -34,7 +37,7 @@ Route::apiResource('products.photos', \App\Http\Controllers\API\ProductPhotosCon
     ->middleware('auth:sanctum');
 
 Route::apiResource('products', \App\Http\Controllers\API\ProductController::class)
-                ->middleware('auth:sanctum');
+    ->middleware('auth:sanctum');
 
 Route::post('/login', [\App\Http\Controllers\API\AuthController::class, 'login']);
 Route::post('/logout', [\App\Http\Controllers\API\AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -48,5 +51,3 @@ Route::post('/logout', [\App\Http\Controllers\API\AuthController::class, 'logout
 //        Route::match(['put', 'patch'], '/{product}', 'update');
 //        Route::delete('/{product}', 'destroy');
 //});
-
-
